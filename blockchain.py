@@ -23,7 +23,7 @@ class Blockchain:
                 file_content = f.readlines()
                 blockchain = json.loads(file_content[0][:-1])
                 for block in blockchain:
-                    converted_transactions = [Transaction(tx['sender'], tx['recipient'], tx['amount']) for tx in
+                    converted_transactions = [Transaction(tx['sender'], tx['recipient'], tx['signature'], tx['amount']) for tx in
                                               block['transactions']]
                     updated_block = Block(
                         block['index'],
@@ -38,7 +38,7 @@ class Blockchain:
                 opened_transactions = json.loads(file_content[1])
                 updated_transactions = []
                 for tx in opened_transactions:
-                    converted_transaction = Transaction(tx['sender'], tx['recipient'], tx['amount'])
+                    converted_transaction = Transaction(tx['sender'], tx['recipient'], tx['signature'], tx['amount'])
                     updated_transactions.append(converted_transaction)
                 self.opened_transactions = updated_transactions
 
@@ -88,8 +88,8 @@ class Blockchain:
             return None
         return self.chain[-1]
 
-    def add_transaction(self, recipient, sender, amount=1.0):
-        transaction = Transaction(sender, recipient, amount)
+    def add_transaction(self, recipient, sender, signature, amount=1.0):
+        transaction = Transaction(sender, recipient, signature, amount)
         if Verification.verify_transaction(transaction, self.get_balance):
             self.opened_transactions.append(transaction)
             self.participants.add(sender)
@@ -104,7 +104,7 @@ class Blockchain:
     def mine_block(self):
         last_block = self.chain[-1]
         proof = self.proof_of_work()
-        reward_transaction = Transaction('MINING', self.hosting_node, MINING_REWARD)
+        reward_transaction = Transaction('MINING', self.hosting_node, '', MINING_REWARD)
         copied_transactions = self.opened_transactions[:]
         copied_transactions.append(reward_transaction)
         block = Block(len(self.chain), hash_block(last_block), copied_transactions, proof)
@@ -113,16 +113,3 @@ class Blockchain:
         self.save_data()
 
         print(self.chain)
-
-
-
-
-
-
-
-
-
-
-
-
-

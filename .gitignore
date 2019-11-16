@@ -1,0 +1,3 @@
+blockchain.txt
+*.pyc 
+**/__pycache__/

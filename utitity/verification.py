@@ -10,7 +10,7 @@ class Verification:
         guess = (str(transactions_to_dict) + str(last_hash) + str(proof)).encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
         print(guess_hash)
-        return guess_hash[0:2] == '00'
+        return guess_hash[0:3] == '000'
 
 
     @classmethod
